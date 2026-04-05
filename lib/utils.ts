@@ -1,6 +1,6 @@
+import { OrderStatus } from "@/model/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { OrderStatus } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -92,3 +92,73 @@ export function timeAgo(dateString: string): string {
 
   return `${Math.floor(seconds / 2592000)}mo ago`;
 }
+
+const NETWORK_PREFIXES: Record<string, string> = {
+  "024": "MTN",
+  "054": "MTN",
+  "055": "MTN",
+  "059": "MTN",
+  "020": "TELECEL",
+  "050": "TELECEL",
+  "027": "AIRTELTIGO",
+  "057": "AIRTELTIGO",
+  "026": "AIRTELTIGO",
+  "056": "AIRTELTIGO",
+};
+
+export function detectNetwork(phone: string): string | null {
+  const digits = phone.replace(/\D/g, "");
+  const prefix = digits.slice(0, 3);
+  return NETWORK_PREFIXES[prefix] ?? null;
+}
+
+export function formatPhone(value: string) {
+  return value.replace(/\D/g, "").slice(0, 10);
+}
+
+export const TERMINAL_STATUSES = [
+  "FULFILLED",
+  "FULFILLMENT_FAILED",
+  "PAYMENT_FAILED",
+];
+
+export const STATUS_STEPS = [
+  { key: "PENDING", label: "Order placed" },
+  { key: "PAYMENT_INITIATED", label: "Payment initiated" },
+  { key: "FULFILLMENT_INITIATED", label: "Sending data" },
+  { key: "FULFILLED", label: "Data delivered" },
+];
+
+export const STATUS_ORDER = [
+  "PENDING",
+  "PAYMENT_INITIATED",
+  "FULFILLMENT_INITIATED",
+  "FULFILLED",
+];
+
+export const NETWORKS = [
+  {
+    name: "MTN",
+    color: "bg-yellow-400",
+    textColor: "text-yellow-900",
+    borderColor: "border-yellow-200 dark:border-yellow-900/40",
+    bgColor: "bg-yellow-50 dark:bg-yellow-900/10",
+    href: "/store/buy?network=MTN",
+  },
+  {
+    name: "Telecel",
+    color: "bg-red-500",
+    textColor: "text-red-900",
+    borderColor: "border-red-200 dark:border-red-900/40",
+    bgColor: "bg-red-50 dark:bg-red-900/10",
+    href: "/store/buy?network=TELECEL",
+  },
+  {
+    name: "AirtelTigo",
+    color: "bg-blue-500",
+    textColor: "text-blue-900",
+    borderColor: "border-blue-200 dark:border-blue-900/40",
+    bgColor: "bg-blue-50 dark:bg-blue-900/10",
+    href: "/store/buy?network=AIRTELTIGO",
+  },
+];

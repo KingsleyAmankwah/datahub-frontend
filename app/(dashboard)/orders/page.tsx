@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { ordersApi } from "@/lib/api";
-import { PaginatedOrders } from "@/types";
 import {
   formatGHS,
   formatDateTime,
@@ -13,6 +12,7 @@ import {
   networkColor,
 } from "@/lib/utils";
 import { Search, ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { PaginatedOrders } from "@/model/interface";
 
 const STATUS_FILTERS: { label: string; value: string }[] = [
   { label: "All", value: "" },
@@ -31,7 +31,8 @@ export default function OrdersPage() {
 
   const { data, isLoading } = useQuery<PaginatedOrders>({
     queryKey: ["orders", page, status],
-    queryFn: () => ordersApi.getAll({ page, limit: 20, status: status || undefined }),
+    queryFn: () =>
+      ordersApi.getAll({ page, limit: 20, status: status || undefined }),
   });
 
   const orders = data?.orders ?? [];
@@ -47,7 +48,16 @@ export default function OrdersPage() {
 
   const exportCSV = () => {
     const rows = [
-      ["Reference", "Customer", "Recipient", "Network", "Bundle", "Amount (GHS)", "Status", "Date"],
+      [
+        "Reference",
+        "Customer",
+        "Recipient",
+        "Network",
+        "Bundle",
+        "Amount (GHS)",
+        "Status",
+        "Date",
+      ],
       ...orders.map((o) => [
         o.reference,
         o.user.phoneNumber,
@@ -105,7 +115,10 @@ export default function OrdersPage() {
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
-              onClick={() => { setStatus(f.value); setPage(1); }}
+              onClick={() => {
+                setStatus(f.value);
+                setPage(1);
+              }}
               className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors ${
                 status === f.value
                   ? "bg-emerald-500 text-white"
@@ -124,14 +137,30 @@ export default function OrdersPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">Reference</th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">Customer</th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">Recipient</th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">Network</th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">Bundle</th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">Amount</th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">Status</th>
-                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">Date</th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
+                  Reference
+                </th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
+                  Customer
+                </th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
+                  Recipient
+                </th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
+                  Network
+                </th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
+                  Bundle
+                </th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
+                  Amount
+                </th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
+                  Status
+                </th>
+                <th className="text-left px-5 py-3 text-xs font-medium text-muted-foreground">
+                  Date
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -158,26 +187,43 @@ export default function OrdersPage() {
                           {order.reference}
                         </Link>
                       </td>
-                      <td className="px-5 py-3.5 text-sm text-foreground/80">{order.user.phoneNumber}</td>
-                      <td className="px-5 py-3.5 text-sm text-foreground/80">{order.recipientPhone}</td>
+                      <td className="px-5 py-3.5 text-sm text-foreground/80">
+                        {order.user.phoneNumber}
+                      </td>
+                      <td className="px-5 py-3.5 text-sm text-foreground/80">
+                        {order.recipientPhone}
+                      </td>
                       <td className="px-5 py-3.5">
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${networkColor(order.recipientNetwork)}`}>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${networkColor(order.recipientNetwork)}`}
+                        >
                           {order.recipientNetwork}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-sm text-foreground/80">{order.bundle?.name ?? "—"}</td>
-                      <td className="px-5 py-3.5 text-sm font-medium text-foreground">{formatGHS(order.amount)}</td>
+                      <td className="px-5 py-3.5 text-sm text-foreground/80">
+                        {order.bundle?.name ?? "—"}
+                      </td>
+                      <td className="px-5 py-3.5 text-sm font-medium text-foreground">
+                        {formatGHS(order.amount)}
+                      </td>
                       <td className="px-5 py-3.5">
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${orderStatusColor(order.status)}`}>
+                        <span
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${orderStatusColor(order.status)}`}
+                        >
                           {orderStatusLabel(order.status)}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-xs text-muted-foreground">{formatDateTime(order.createdAt)}</td>
+                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                        {formatDateTime(order.createdAt)}
+                      </td>
                     </tr>
                   ))}
               {!isLoading && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-5 py-10 text-center text-sm text-muted-foreground">
+                  <td
+                    colSpan={8}
+                    className="px-5 py-10 text-center text-sm text-muted-foreground"
+                  >
                     No orders found
                   </td>
                 </tr>

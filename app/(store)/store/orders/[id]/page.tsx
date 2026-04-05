@@ -3,7 +3,14 @@
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ordersApi } from "@/lib/api";
-import { formatGHS, formatDateTime, orderStatusLabel } from "@/lib/utils";
+import {
+  formatGHS,
+  formatDateTime,
+  orderStatusLabel,
+  TERMINAL_STATUSES,
+  STATUS_ORDER,
+  STATUS_STEPS,
+} from "@/lib/utils";
 import {
   CheckCircle2,
   XCircle,
@@ -14,26 +21,16 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-const TERMINAL_STATUSES = ["FULFILLED", "FULFILLMENT_FAILED", "PAYMENT_FAILED"];
-
-const STATUS_STEPS = [
-  { key: "PENDING", label: "Order placed" },
-  { key: "PAYMENT_INITIATED", label: "Payment initiated" },
-  { key: "FULFILLMENT_INITIATED", label: "Sending data" },
-  { key: "FULFILLED", label: "Data delivered" },
-];
-
-const STATUS_ORDER = [
-  "PENDING",
-  "PAYMENT_INITIATED",
-  "FULFILLMENT_INITIATED",
-  "FULFILLED",
-];
-
-function StepIcon({ state }: { state: "done" | "active" | "failed" | "pending" }) {
-  if (state === "done") return <CheckCircle2 className="w-5 h-5 text-emerald-500" />;
+function StepIcon({
+  state,
+}: {
+  state: "done" | "active" | "failed" | "pending";
+}) {
+  if (state === "done")
+    return <CheckCircle2 className="w-5 h-5 text-emerald-500" />;
   if (state === "failed") return <XCircle className="w-5 h-5 text-red-500" />;
-  if (state === "active") return <Loader2 className="w-5 h-5 text-emerald-500 animate-spin" />;
+  if (state === "active")
+    return <Loader2 className="w-5 h-5 text-emerald-500 animate-spin" />;
   return <div className="w-5 h-5 rounded-full border-2 border-border" />;
 }
 
@@ -54,7 +51,7 @@ export default function OrderStatusPage() {
     queryKey: ["order-audit", id],
     queryFn: () => ordersApi.getAuditLog(id),
     enabled: !!order,
-    refetchInterval: (query) => {
+    refetchInterval: () => {
       const status = order?.status;
       if (status && TERMINAL_STATUSES.includes(status)) return false;
       return 3000;
@@ -84,7 +81,8 @@ export default function OrderStatusPage() {
   }
 
   const isFulfilled = order.status === "FULFILLED";
-  const isFailed = order.status === "FULFILLMENT_FAILED" || order.status === "PAYMENT_FAILED";
+  const isFailed =
+    order.status === "FULFILLMENT_FAILED" || order.status === "PAYMENT_FAILED";
   const currentIndex = STATUS_ORDER.indexOf(order.status);
 
   return (
@@ -137,16 +135,28 @@ export default function OrderStatusPage() {
           Order details
         </p>
         {[
-          { label: "Reference", value: <span className="font-mono text-emerald-500">{order.reference}</span> },
+          {
+            label: "Reference",
+            value: (
+              <span className="font-mono text-emerald-500">
+                {order.reference}
+              </span>
+            ),
+          },
           { label: "Amount", value: formatGHS(order.amount) },
           { label: "Network", value: order.recipientNetwork },
-          { label: "Recipient", value: <span className="font-mono">{order.recipientPhone}</span> },
+          {
+            label: "Recipient",
+            value: <span className="font-mono">{order.recipientPhone}</span>,
+          },
           { label: "Bundle", value: order.bundle?.name ?? "—" },
           { label: "Placed", value: formatDateTime(order.createdAt) },
         ].map(({ label, value }) => (
           <div key={label} className="flex justify-between text-sm">
             <span className="text-muted-foreground">{label}</span>
-            <span className="text-foreground font-medium text-right">{value}</span>
+            <span className="text-foreground font-medium text-right">
+              {value}
+            </span>
           </div>
         ))}
       </div>
@@ -180,7 +190,9 @@ export default function OrderStatusPage() {
                   {step.label}
                 </span>
                 {state === "active" && !isFailed && (
-                  <span className="ml-auto text-xs text-emerald-500">In progress</span>
+                  <span className="ml-auto text-xs text-emerald-500">
+                    In progress
+                  </span>
                 )}
                 {state === "failed" && (
                   <span className="ml-auto text-xs text-red-500">Failed</span>
@@ -198,7 +210,7 @@ export default function OrderStatusPage() {
             Activity
           </p>
           <div className="relative">
-            <div className="absolute left-[7px] top-0 bottom-0 w-px bg-border" />
+            <div className="absolute left-1.75 top-0 bottom-0 w-px bg-border" />
             <div className="space-y-4">
               {auditLogs.map((log) => (
                 <div key={log.id} className="flex gap-3 relative">

@@ -4,11 +4,9 @@ import { useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ordersApi } from "@/lib/api";
-import { formatGHS, orderStatusLabel } from "@/lib/utils";
+import { formatGHS, orderStatusLabel, TERMINAL_STATUSES } from "@/lib/utils";
 import { Loader2, CheckCircle2, XCircle, Smartphone } from "lucide-react";
 import Link from "next/link";
-
-const TERMINAL_STATUSES = ["FULFILLED", "FULFILLMENT_FAILED", "PAYMENT_FAILED"];
 
 export default function PaymentPage() {
   const { id } = useParams<{ id: string }>();

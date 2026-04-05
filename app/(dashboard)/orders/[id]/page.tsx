@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ordersApi } from "@/lib/api";
-import { Order, AuditLog } from "@/types";
 import {
   formatGHS,
   formatDateTime,
@@ -21,6 +20,7 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
+import { AuditLog, Order } from "@/model/interface";
 
 function Section({
   title,

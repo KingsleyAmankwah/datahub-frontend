@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { bundlesApi } from "@/lib/api";
-import { Bundle, Network } from "@/types";
 import { formatGHS } from "@/lib/utils";
 import { Plus, Pencil, PowerOff, Power, X } from "lucide-react";
 import { toast } from "sonner";
+import { Network } from "@/model/types";
+import { Bundle, BundleFormData } from "@/model/interface";
 
 const NETWORKS: Network[] = ["MTN", "TELECEL", "AIRTELTIGO"];
 
@@ -15,17 +16,6 @@ const networkBadge: Record<Network, string> = {
   TELECEL: "bg-red-500/10 text-red-600 dark:text-red-400",
   AIRTELTIGO: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
 };
-
-interface BundleFormData {
-  name: string;
-  network: Network;
-  dataMb: string;
-  validityDays: string;
-  costPrice: string;
-  sellingPrice: string;
-  description: string;
-  sortOrder: string;
-}
 
 const emptyForm: BundleFormData = {
   name: "",

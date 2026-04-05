@@ -4,11 +4,12 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { bundlesApi, ordersApi } from "@/lib/api";
-import { Bundle, Network } from "@/types";
 import { formatGHS } from "@/lib/utils";
 import { ArrowLeft, Phone, Check, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { Network } from "@/model/types";
+import { Bundle } from "@/model/interface";
 
 const NETWORKS: { value: Network; label: string; color: string }[] = [
   { value: "MTN", label: "MTN", color: "bg-yellow-400" },

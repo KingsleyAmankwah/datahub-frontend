@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { ordersApi } from "@/lib/api";
-import { AuditLog, Order } from "@/types";
 import {
   formatDateTime,
   orderStatusColor,
@@ -20,6 +19,7 @@ import {
   ChevronRight,
   ArrowUpRight,
 } from "lucide-react";
+import { AuditLog, Order } from "@/model/interface";
 
 function actionLabel(action: string) {
   return action

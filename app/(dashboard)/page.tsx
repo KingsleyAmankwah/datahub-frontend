@@ -2,7 +2,6 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { ordersApi, bundlesApi } from "@/lib/api";
-import { Order, PaginatedOrders, Bundle } from "@/types";
 import {
   formatGHS,
   orderStatusColor,
@@ -20,6 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { Bundle, Order, PaginatedOrders } from "@/model/interface";
 
 function StatCard({
   label,

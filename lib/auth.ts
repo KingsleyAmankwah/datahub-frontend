@@ -1,13 +1,8 @@
+import { AdminPayload } from "@/model/interface";
 import Cookies from "js-cookie";
 
 const TOKEN_KEY = "token";
 const ADMIN_KEY = "admin";
-
-export interface AdminPayload {
-  id: string;
-  email: string;
-  name: string;
-}
 
 export function setAuth(accessToken: string, admin: AdminPayload) {
   Cookies.set(TOKEN_KEY, accessToken, { expires: 1, path: "/" });

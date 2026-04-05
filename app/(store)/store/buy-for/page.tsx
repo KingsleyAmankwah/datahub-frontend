@@ -4,29 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Phone, ArrowRight } from "lucide-react";
 import Link from "next/link";
-
-const NETWORK_PREFIXES: Record<string, string> = {
-  "024": "MTN",
-  "054": "MTN",
-  "055": "MTN",
-  "059": "MTN",
-  "020": "TELECEL",
-  "050": "TELECEL",
-  "027": "AIRTELTIGO",
-  "057": "AIRTELTIGO",
-  "026": "AIRTELTIGO",
-  "056": "AIRTELTIGO",
-};
-
-function detectNetwork(phone: string): string | null {
-  const digits = phone.replace(/\D/g, "");
-  const prefix = digits.slice(0, 3);
-  return NETWORK_PREFIXES[prefix] ?? null;
-}
-
-function formatPhone(value: string) {
-  return value.replace(/\D/g, "").slice(0, 10);
-}
+import { detectNetwork, formatPhone } from "@/lib/utils";
 
 export default function BuyForPage() {
   const router = useRouter();

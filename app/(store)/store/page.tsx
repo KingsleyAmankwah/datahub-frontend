@@ -1,32 +1,6 @@
 import Link from "next/link";
 import { Zap, Users, Clock } from "lucide-react";
-
-const NETWORKS = [
-  {
-    name: "MTN",
-    color: "bg-yellow-400",
-    textColor: "text-yellow-900",
-    borderColor: "border-yellow-200 dark:border-yellow-900/40",
-    bgColor: "bg-yellow-50 dark:bg-yellow-900/10",
-    href: "/store/buy?network=MTN",
-  },
-  {
-    name: "Telecel",
-    color: "bg-red-500",
-    textColor: "text-red-900",
-    borderColor: "border-red-200 dark:border-red-900/40",
-    bgColor: "bg-red-50 dark:bg-red-900/10",
-    href: "/store/buy?network=TELECEL",
-  },
-  {
-    name: "AirtelTigo",
-    color: "bg-blue-500",
-    textColor: "text-blue-900",
-    borderColor: "border-blue-200 dark:border-blue-900/40",
-    bgColor: "bg-blue-50 dark:bg-blue-900/10",
-    href: "/store/buy?network=AIRTELTIGO",
-  },
-];
+import { NETWORKS } from "@/lib/utils";
 
 const FEATURES = [
   {
