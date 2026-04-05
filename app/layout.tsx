@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
+import { Providers } from "@/components/providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -17,9 +18,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DataHub Admin",
-  description:
-    "Admin dashboard for managing data bundles, orders, payments and fulfillment",
+  title: {
+    default: "DataHub Admin",
+    template: "%s | DataHub Admin",
+  },
+  description: "DataHub — Ghana's number one platform to purchase data bundles. Admin dashboard for managing bundles, orders and fulfillment.",
 };
 
 export default function RootLayout({
@@ -35,7 +38,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <Providers>
+            {children}
+          </Providers>
           <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>
