@@ -9,12 +9,7 @@ import { useTheme } from "next-themes";
 const breadcrumbMap: Record<string, string> = {
   orders: "Orders",
   bundles: "Bundles",
-  payments: "Payments",
-  fulfillment: "Fulfillment",
-  users: "Users",
-  ussd: "USSD Sessions",
   "audit-logs": "Audit Logs",
-  settings: "Settings",
 };
 
 function Breadcrumb() {

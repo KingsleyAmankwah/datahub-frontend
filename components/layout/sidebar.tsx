@@ -7,11 +7,6 @@ import {
   LayoutDashboard,
   ShoppingCart,
   Package,
-  CreditCard,
-  Truck,
-  Users,
-  PhoneCall,
-  Settings,
   Database,
   ScrollText,
   LogOut,
@@ -32,25 +27,12 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
-    label: "Main",
+    label: "Manage",
     items: [
       { label: "Orders", href: "/orders", icon: ShoppingCart },
       { label: "Bundles", href: "/bundles", icon: Package },
-      { label: "Payments", href: "/payments", icon: CreditCard },
-      { label: "Fulfillment", href: "/fulfillment", icon: Truck },
-    ],
-  },
-  {
-    label: "Management",
-    items: [
-      { label: "Users", href: "/users", icon: Users },
-      { label: "USSD Sessions", href: "/ussd", icon: PhoneCall },
       { label: "Audit Logs", href: "/audit-logs", icon: ScrollText },
     ],
-  },
-  {
-    label: "System",
-    items: [{ label: "Settings", href: "/settings", icon: Settings }],
   },
 ];
 
