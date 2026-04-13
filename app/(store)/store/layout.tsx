@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Buy Data Bundles | DataHub",
@@ -30,12 +31,12 @@ export default function StoreLayout({
               DataHub
             </span>
           </div>
-          <a
+          <Link
             href="/store/orders"
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Order history
-          </a>
+          </Link>
         </div>
       </header>
 
