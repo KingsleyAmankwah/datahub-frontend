@@ -323,7 +323,7 @@ export default function DashboardPage() {
                 >
                   <td className="px-5 py-3">
                     <Link
-                      href={`/dashboard/orders/${order.id}`}
+                      href={`/orders/${order.id}`}
                       className="text-sm font-mono text-emerald-500 hover:text-emerald-400"
                     >
                       {order.reference}
