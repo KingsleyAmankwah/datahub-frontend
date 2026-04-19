@@ -88,6 +88,17 @@ export interface CreateOrderPayload {
   recipientPhone: string;
 }
 
+export interface OrderPublicStatus {
+  id: string;
+  reference: string;
+  status: OrderStatus;
+  amount: number;
+  recipientPhone: string;
+  recipientNetwork: Network;
+  createdAt: string;
+  updatedAt?: string;
+}
+
 export interface GetAllOrdersParams {
   page: number;
   limit: number;

@@ -13,9 +13,8 @@ export default function PaymentPage() {
   const router = useRouter();
 
   const { data: order } = useQuery({
-    queryKey: ["order", id],
-    queryFn: () => ordersApi.getById(id),
-    // Poll every 3s until we hit a terminal status
+    queryKey: ["order", "status", id],
+    queryFn: () => ordersApi.getStatus(id),
     refetchInterval: (query) => {
       const status = query.state.data?.status;
       if (status && TERMINAL_STATUSES.includes(status)) return false;
@@ -53,7 +52,7 @@ export default function PaymentPage() {
             <p className="text-sm text-muted-foreground max-w-xs">
               A Mobile Money prompt has been sent to{" "}
               <span className="font-mono font-medium text-foreground">
-                {order?.user?.phoneNumber ?? "your number"}
+                {order?.recipientPhone ?? "your number"}
               </span>
               . Approve it to complete your purchase.
             </p>
@@ -76,7 +75,7 @@ export default function PaymentPage() {
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Bundle</span>
                 <span className="text-foreground">
-                  {order.bundle?.name ?? "—"}
+                  {order.recipientNetwork}
                 </span>
               </div>
               <div className="flex justify-between text-sm">

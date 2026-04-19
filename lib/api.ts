@@ -4,6 +4,7 @@ import {
   CreateOrderPayload,
   GetAllOrdersParams,
   Order,
+  OrderPublicStatus,
   PaginatedOrders,
 } from "@/model/interface";
 import {
@@ -77,6 +78,10 @@ export const ordersApi = {
 
   getAuditLog(id: string): Promise<AuditLog[]> {
     return authFetch<AuditLog[]>(`/orders/${id}/audit`);
+  },
+
+  getStatus(id: string): Promise<OrderPublicStatus> {
+    return publicFetch<OrderPublicStatus>(`/orders/${id}/status`);
   },
 
   lookup(reference: string, phone: string): Promise<Order> {

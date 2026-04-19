@@ -1,5 +1,6 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ordersApi } from "@/lib/api";
 import {
@@ -34,6 +35,8 @@ function StepIcon({
 }
 
 export default function OrderStatusPage() {
+  const { id } = useParams<{ id: string }>();
+
   const ref =
     typeof window !== "undefined"
       ? (sessionStorage.getItem("order_lookup_ref") ?? "")
@@ -43,10 +46,19 @@ export default function OrderStatusPage() {
       ? (sessionStorage.getItem("order_lookup_phone") ?? "")
       : "";
 
+  // One-time verified load — confirms the user owns this order
   const { data: order, isLoading } = useQuery({
     queryKey: ["order", "lookup", ref, phone],
     queryFn: () => ordersApi.lookup(ref, phone),
     enabled: !!ref && !!phone,
+    staleTime: Infinity,
+  });
+
+  // Lightweight public status polling — no auth, no phone needed
+  const { data: liveStatus } = useQuery({
+    queryKey: ["order", "status", id],
+    queryFn: () => ordersApi.getStatus(id),
+    enabled: !!order,
     refetchInterval: (query) => {
       const status = query.state.data?.status;
       if (status && TERMINAL_STATUSES.includes(status)) return false;
@@ -59,11 +71,16 @@ export default function OrderStatusPage() {
     queryFn: () => ordersApi.lookupAudit(ref, phone),
     enabled: !!order && !!ref && !!phone,
     refetchInterval: () => {
-      const status = order?.status;
+      const status = liveStatus?.status ?? order?.status;
       if (status && TERMINAL_STATUSES.includes(status)) return false;
       return 3000;
     },
   });
+
+  // Merge live status into the full order object for display
+  const mergedOrder = order
+    ? { ...order, status: liveStatus?.status ?? order.status }
+    : undefined;
 
   if (isLoading) {
     return (
@@ -90,7 +107,7 @@ export default function OrderStatusPage() {
     );
   }
 
-  if (!order) {
+  if (!mergedOrder) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <Package className="w-10 h-10 text-muted-foreground mb-3" />
@@ -102,10 +119,11 @@ export default function OrderStatusPage() {
     );
   }
 
-  const isFulfilled = order.status === "FULFILLED";
+  const isFulfilled = mergedOrder.status === "FULFILLED";
   const isFailed =
-    order.status === "FULFILLMENT_FAILED" || order.status === "PAYMENT_FAILED";
-  const currentIndex = STATUS_ORDER.indexOf(order.status);
+    mergedOrder.status === "FULFILLMENT_FAILED" ||
+    mergedOrder.status === "PAYMENT_FAILED";
+  const currentIndex = STATUS_ORDER.indexOf(mergedOrder.status);
 
   return (
     <div className="space-y-6">
@@ -144,9 +162,9 @@ export default function OrderStatusPage() {
         </p>
         <p className="text-sm text-muted-foreground">
           {isFulfilled
-            ? `${order.bundle?.dataMb ? (order.bundle.dataMb >= 1024 ? `${(order.bundle.dataMb / 1024).toFixed(0)}GB` : `${order.bundle.dataMb}MB`) : order.bundle?.name} sent to ${order.recipientPhone}`
+            ? `${mergedOrder.bundle?.dataMb ? (mergedOrder.bundle.dataMb >= 1024 ? `${(mergedOrder.bundle.dataMb / 1024).toFixed(0)}GB` : `${mergedOrder.bundle.dataMb}MB`) : mergedOrder.bundle?.name} sent to ${mergedOrder.recipientPhone}`
             : isFailed
-              ? orderStatusLabel(order.status)
+              ? orderStatusLabel(mergedOrder.status)
               : "This page updates automatically"}
         </p>
       </div>
@@ -161,18 +179,20 @@ export default function OrderStatusPage() {
             label: "Reference",
             value: (
               <span className="font-mono text-emerald-500">
-                {order.reference}
+                {mergedOrder.reference}
               </span>
             ),
           },
-          { label: "Amount", value: formatGHS(order.amount) },
-          { label: "Network", value: order.recipientNetwork },
+          { label: "Amount", value: formatGHS(mergedOrder.amount) },
+          { label: "Network", value: mergedOrder.recipientNetwork },
           {
             label: "Recipient",
-            value: <span className="font-mono">{order.recipientPhone}</span>,
+            value: (
+              <span className="font-mono">{mergedOrder.recipientPhone}</span>
+            ),
           },
-          { label: "Bundle", value: order.bundle?.name ?? "—" },
-          { label: "Placed", value: formatDateTime(order.createdAt) },
+          { label: "Bundle", value: mergedOrder.bundle?.name ?? "—" },
+          { label: "Placed", value: formatDateTime(mergedOrder.createdAt) },
         ].map(({ label, value }) => (
           <div key={label} className="flex justify-between text-sm">
             <span className="text-muted-foreground">{label}</span>
