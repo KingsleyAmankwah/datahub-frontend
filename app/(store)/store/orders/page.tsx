@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { ordersApi } from "@/lib/api";
 import {
   formatGHS,
@@ -9,35 +8,47 @@ import {
   orderStatusColor,
   orderStatusLabel,
 } from "@/lib/utils";
-import { Search, Package, ArrowRight } from "lucide-react";
+import { Search, Package, ArrowRight, Phone } from "lucide-react";
 import Link from "next/link";
+import { Order } from "@/model/interface";
 
 export default function OrderHistoryPage() {
-  const [input, setInput] = useState("");
-  const [submittedId, setSubmittedId] = useState("");
+  const [reference, setReference] = useState("");
+  const [phone, setPhone] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
-  const {
-    data: order,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["order", "lookup", submittedId],
-    queryFn: () => ordersApi.getById(submittedId),
-    enabled: submittedId.length > 0,
-    retry: false,
-  });
-
-  function handleSearch(e: React.FormEvent) {
+  async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    if (input.trim()) setSubmittedId(input.trim());
+    const ref = reference.trim();
+    const ph = phone.trim();
+    if (!ref || !ph) return;
+
+    setIsLoading(true);
+    setOrder(null);
+    setNotFound(false);
+
+    try {
+      const result = await ordersApi.lookup(ref, ph);
+      sessionStorage.setItem("order_lookup_ref", ref);
+      sessionStorage.setItem("order_lookup_phone", ph);
+      setOrder(result);
+    } catch {
+      setNotFound(true);
+    } finally {
+      setIsLoading(false);
+    }
   }
+
+  const submitted = !isLoading && (order !== null || notFound);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Order lookup</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Enter your order reference to check its status
+          Enter your order reference and phone number to check its status
         </p>
       </div>
 
@@ -46,37 +57,47 @@ export default function OrderHistoryPage() {
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="e.g. DH-20240101-XXXX"
+            value={reference}
+            onChange={(e) => setReference(e.target.value)}
+            placeholder="Order reference e.g. BB-20240101-XXXX"
             className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm font-mono"
+          />
+        </div>
+        <div className="relative">
+          <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Phone number used to place order"
+            className="w-full pl-10 pr-4 py-3 bg-card border border-border rounded-xl text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
           />
         </div>
         <button
           type="submit"
-          disabled={!input.trim()}
+          disabled={!reference.trim() || !phone.trim() || isLoading}
           className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors text-sm"
         >
           <Search className="w-4 h-4" />
-          Look up order
+          {isLoading ? "Looking up…" : "Look up order"}
         </button>
       </form>
 
-      {submittedId && (
+      {isLoading && <div className="h-24 bg-muted rounded-xl animate-pulse" />}
+
+      {submitted && (
         <div>
-          {isLoading ? (
-            <div className="h-24 bg-muted rounded-xl animate-pulse" />
-          ) : isError || !order ? (
+          {notFound ? (
             <div className="flex flex-col items-center justify-center py-12 bg-card border border-border rounded-xl text-center">
               <Package className="w-9 h-9 text-muted-foreground mb-2" />
               <p className="text-sm font-medium text-foreground">
                 Order not found
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Check the reference and try again
+                Check your reference and phone number and try again
               </p>
             </div>
-          ) : (
+          ) : order ? (
             <Link
               href={`/store/orders/${order.id}`}
               className="flex items-center justify-between p-4 bg-card border border-border rounded-xl hover:bg-muted transition-colors"
@@ -107,7 +128,7 @@ export default function OrderHistoryPage() {
                 <ArrowRight className="w-4 h-4 text-muted-foreground" />
               </div>
             </Link>
-          )}
+          ) : null}
         </div>
       )}
 
