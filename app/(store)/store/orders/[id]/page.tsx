@@ -1,6 +1,5 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { ordersApi } from "@/lib/api";
 import {
@@ -35,11 +34,19 @@ function StepIcon({
 }
 
 export default function OrderStatusPage() {
-  const { id } = useParams<{ id: string }>();
+  const ref =
+    typeof window !== "undefined"
+      ? (sessionStorage.getItem("order_lookup_ref") ?? "")
+      : "";
+  const phone =
+    typeof window !== "undefined"
+      ? (sessionStorage.getItem("order_lookup_phone") ?? "")
+      : "";
 
   const { data: order, isLoading } = useQuery({
-    queryKey: ["order", id],
-    queryFn: () => ordersApi.getById(id),
+    queryKey: ["order", "lookup", ref, phone],
+    queryFn: () => ordersApi.lookup(ref, phone),
+    enabled: !!ref && !!phone,
     refetchInterval: (query) => {
       const status = query.state.data?.status;
       if (status && TERMINAL_STATUSES.includes(status)) return false;
@@ -48,9 +55,9 @@ export default function OrderStatusPage() {
   });
 
   const { data: auditLogs } = useQuery({
-    queryKey: ["order-audit", id],
-    queryFn: () => ordersApi.getAuditLog(id),
-    enabled: !!order,
+    queryKey: ["order-audit", "lookup", ref, phone],
+    queryFn: () => ordersApi.lookupAudit(ref, phone),
+    enabled: !!order && !!ref && !!phone,
     refetchInterval: () => {
       const status = order?.status;
       if (status && TERMINAL_STATUSES.includes(status)) return false;
@@ -64,6 +71,21 @@ export default function OrderStatusPage() {
         <div className="h-8 bg-muted rounded w-40 animate-pulse" />
         <div className="h-32 bg-muted rounded-xl animate-pulse" />
         <div className="h-48 bg-muted rounded-xl animate-pulse" />
+      </div>
+    );
+  }
+
+  if (!ref || !phone) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <Package className="w-10 h-10 text-muted-foreground mb-3" />
+        <p className="text-foreground font-medium">Verification required</p>
+        <p className="text-sm text-muted-foreground mt-1 mb-4">
+          Please look up your order first
+        </p>
+        <Link href="/store/orders" className="text-sm text-emerald-500">
+          Go to order lookup →
+        </Link>
       </div>
     );
   }
