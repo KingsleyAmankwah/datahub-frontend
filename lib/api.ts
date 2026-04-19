@@ -79,6 +79,20 @@ export const ordersApi = {
     return authFetch<AuditLog[]>(`/orders/${id}/audit`);
   },
 
+  lookup(reference: string, phone: string): Promise<Order> {
+    return publicFetch<Order>("/orders/lookup", {
+      method: "POST",
+      body: JSON.stringify({ reference, phone }),
+    });
+  },
+
+  lookupAudit(reference: string, phone: string): Promise<AuditLog[]> {
+    return publicFetch<AuditLog[]>("/orders/lookup/audit", {
+      method: "POST",
+      body: JSON.stringify({ reference, phone }),
+    });
+  },
+
   create(payload: CreateOrderPayload): Promise<Order> {
     return publicFetch<Order>("/orders", {
       method: "POST",
