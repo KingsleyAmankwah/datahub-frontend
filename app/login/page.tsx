@@ -18,7 +18,7 @@ export default function LoginPage() {
             <Database className="size-5 text-primary-foreground" />
           </div>
           <span className="text-lg font-semibold tracking-tight">
-            DataHub Admin
+            Bundle Boss Admin
           </span>
         </div>
 

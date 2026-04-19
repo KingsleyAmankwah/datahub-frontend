@@ -19,10 +19,10 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "DataHub Admin",
-    template: "%s | DataHub Admin",
+    default: "Bundle Boss Admin",
+    template: "%s | Bundle Boss Admin",
   },
-  description: "DataHub — Ghana's number one platform to purchase data bundles. Admin dashboard for managing bundles, orders and fulfillment.",
+  description: "Bundle Boss — Ghana's number one platform to purchase data bundles. Admin dashboard for managing bundles, orders and fulfillment.",
 };
 
 export default function RootLayout({

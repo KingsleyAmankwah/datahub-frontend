@@ -1,4 +1,4 @@
-# DataHub Admin
+# Bundle Boss
 
 A Next.js admin dashboard for managing data bundles, orders, payments, and fulfillment — built on top of the [datahub-api](../datahub-api).
 

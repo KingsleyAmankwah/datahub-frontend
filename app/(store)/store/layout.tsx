@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Buy Data Bundles | DataHub",
+  title: "Buy Data Bundles | Bundle Boss Store",
   description:
-    "DataHub — Ghana's number one platform to purchase data bundles for MTN, Telecel and AirtelTigo instantly via Mobile Money.",
+    "Bundle Boss — Ghana's number one platform to purchase data bundles for MTN, Telecel and AirtelTigo instantly via Mobile Money.",
   openGraph: {
-    title: "DataHub — Buy Data Bundles Instantly",
+    title: "Bundle Boss — Buy Data Bundles Instantly",
     description:
       "Ghana's number one platform to purchase data bundles for MTN, Telecel and AirtelTigo.",
     type: "website",
@@ -25,10 +25,10 @@ export default function StoreLayout({
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-emerald-500 flex items-center justify-center">
-              <span className="text-white text-xs font-bold">D</span>
+              <span className="text-white text-xs font-bold">BB</span>
             </div>
             <span className="font-semibold text-sm text-foreground">
-              DataHub
+              Bundle Boss Store
             </span>
           </div>
           <Link
@@ -48,7 +48,7 @@ export default function StoreLayout({
       {/* Footer */}
       <footer className="border-t border-border py-4">
         <p className="text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} DataHub · Instant data bundles
+          © {new Date().getFullYear()} Bundle Boss · Instant data bundles
         </p>
       </footer>
     </div>

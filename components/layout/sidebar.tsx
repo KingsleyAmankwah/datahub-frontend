@@ -68,7 +68,7 @@ export function Sidebar() {
           <Database className="size-4 text-primary-foreground" />
         </div>
         <span className="font-semibold text-sm tracking-tight text-sidebar-foreground">
-          DataHub Admin
+          Bundle Boss
         </span>
       </div>
 
