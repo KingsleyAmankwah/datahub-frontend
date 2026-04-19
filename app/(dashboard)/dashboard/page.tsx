@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ordersApi, bundlesApi } from "@/lib/api";
 import {
@@ -18,7 +19,6 @@ import {
   Package,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import { Bundle, Order, PaginatedOrders } from "@/model/interface";
 
 function StatCard({
@@ -156,7 +156,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-xl font-semibold text-foreground">Overview</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
@@ -164,7 +163,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           label="Revenue today"
@@ -193,7 +191,6 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* Order status row */}
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
           <CheckCircle className="w-8 h-8 text-emerald-500 shrink-0" />
@@ -221,10 +218,9 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Revenue chart */}
         <div className="lg:col-span-2 bg-card border border-border rounded-xl p-5">
           <h2 className="text-sm font-medium text-foreground mb-4">
-            Revenue — last 7 days
+            Revenue â€” last 7 days
           </h2>
           <div className="flex items-end gap-2 h-32">
             {chartData.map((d) => (
@@ -247,7 +243,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Network breakdown */}
         <div className="bg-card border border-border rounded-xl p-5">
           <h2 className="text-sm font-medium text-foreground mb-4">
             By network
@@ -280,7 +275,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Recent orders */}
       <div className="bg-card border border-border rounded-xl overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <h2 className="text-sm font-medium text-foreground">Recent orders</h2>
@@ -288,7 +282,7 @@ export default function DashboardPage() {
             href="/orders"
             className="text-xs text-emerald-500 hover:text-emerald-400"
           >
-            View all →
+            View all orders →
           </Link>
         </div>
         <div className="overflow-x-auto">
@@ -323,7 +317,7 @@ export default function DashboardPage() {
                 >
                   <td className="px-5 py-3">
                     <Link
-                      href={`/orders/${order.id}`}
+                      href={`/dashboard/orders/${order.id}`}
                       className="text-sm font-mono text-emerald-500 hover:text-emerald-400"
                     >
                       {order.reference}

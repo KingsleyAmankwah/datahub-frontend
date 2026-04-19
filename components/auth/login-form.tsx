@@ -37,7 +37,7 @@ export function LoginForm() {
       const { accessToken, admin } = await res.json();
       setAuth(accessToken, admin);
       toast.success(`Welcome back, ${admin.name}`);
-      router.push("/");
+      router.push("/dashboard");
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useTheme } from "next-themes";
 
 const breadcrumbMap: Record<string, string> = {
+  dashboard: "Overview",
   orders: "Orders",
   bundles: "Bundles",
   "audit-logs": "Audit Logs",
@@ -14,7 +15,10 @@ const breadcrumbMap: Record<string, string> = {
 
 function Breadcrumb() {
   const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = pathname
+    .split("/")
+    .filter(Boolean)
+    .filter((segment) => segment !== "dashboard");
 
   if (segments.length === 0) {
     return (

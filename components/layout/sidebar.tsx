@@ -23,7 +23,7 @@ type NavItem = NavLink | NavGroup;
 const navItems: NavItem[] = [
   {
     label: "Overview",
-    href: "/",
+    href: "/dashboard",
     icon: LayoutDashboard,
   },
   {

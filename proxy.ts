@@ -10,7 +10,7 @@ export function proxy(req: NextRequest) {
 
   if (!token && !isPublic) {
     const loginUrl = req.nextUrl.clone();
-    loginUrl.pathname = "/login";
+    loginUrl.pathname = "/store";
     return NextResponse.redirect(loginUrl);
   }
 
