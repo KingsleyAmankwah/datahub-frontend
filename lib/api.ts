@@ -42,6 +42,13 @@ async function apiFetch<T>(
     headers,
   });
 
+  if (response.status === 401 && typeof window !== "undefined") {
+    const { clearAuth } = await import("@/lib/auth");
+    clearAuth();
+    window.location.href = "/login";
+    throw new Error("Unauthorized");
+  }
+
   if (!response.ok)
     throw new Error(
       `${init?.method ?? "GET"} ${path} failed: ${response.statusText}`,
