@@ -22,11 +22,11 @@ export default function PaymentPage() {
     },
   });
 
-  // Redirect to order status page once fulfilled or failed
+  // Redirect to order status page once fulfilled or failed — delay gives user time to read the result
   useEffect(() => {
-    if (order?.status && TERMINAL_STATUSES.includes(order.status)) {
-      router.replace(`/store/orders/${id}`);
-    }
+    if (!order?.status || !TERMINAL_STATUSES.includes(order.status)) return;
+    const timer = setTimeout(() => router.replace(`/store/orders/${id}`), 30000);
+    return () => clearTimeout(timer);
   }, [order?.status, id, router]);
 
   const isPending = !order || !TERMINAL_STATUSES.includes(order.status);
