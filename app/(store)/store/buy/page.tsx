@@ -57,6 +57,8 @@ function BuyPageInner() {
         recipientPhone: effectiveRecipient,
       }),
     onSuccess: (order) => {
+      sessionStorage.setItem("order_lookup_ref", order.reference);
+      sessionStorage.setItem("order_lookup_phone", buyerPhone);
       router.push(`/store/payment/${order.id}`);
     },
     onError: () => toast.error("Failed to place order. Please try again."),
