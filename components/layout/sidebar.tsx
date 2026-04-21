@@ -9,6 +9,7 @@ import {
   Package,
   Database,
   ScrollText,
+  Users,
   LogOut,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -31,6 +32,7 @@ const navItems: NavItem[] = [
     items: [
       { label: "Orders", href: "/orders", icon: ShoppingCart },
       { label: "Bundles", href: "/bundles", icon: Package },
+      { label: "Agents", href: "/agents", icon: Users },
       { label: "Audit Logs", href: "/audit-logs", icon: ScrollText },
     ],
   },
