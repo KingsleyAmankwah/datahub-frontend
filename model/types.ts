@@ -1,10 +1,12 @@
 export type OrderStatus =
   | "PENDING"
   | "PAYMENT_INITIATED"
+  | "PAYMENT_SUCCESS"
   | "PAYMENT_FAILED"
   | "FULFILLMENT_INITIATED"
+  | "FULFILLED"
   | "FULFILLMENT_FAILED"
-  | "FULFILLED";
+  | "REFUNDED";
 
 export type Network = "MTN" | "TELECEL" | "AIRTELTIGO";
 
@@ -28,3 +30,5 @@ export type UpdateBundlePayload = {
 };
 
 export type BundlePayload = CreateBundlePayload;
+
+export type AgentStatus = "PENDING" | "ACTIVE" | "SUSPENDED";

@@ -1,4 +1,4 @@
-import { Network, OrderStatus } from "./types";
+import { Network, OrderStatus, AgentStatus } from "./types";
 
 export interface AdminPayload {
   id: string;
@@ -103,4 +103,53 @@ export interface GetAllOrdersParams {
   page: number;
   limit: number;
   status?: string;
+}
+
+export interface Agent {
+  id: string;
+  userId: string;
+  businessName: string;
+  status: AgentStatus;
+  commissionRate: number;
+  createdAt: string;
+  user: {
+    phoneNumber: string;
+    name: string | null;
+    walletBalance: number;
+  };
+}
+
+export interface WalletTransaction {
+  id: string;
+  type: "TOPUP" | "DEDUCTION" | "REFUND";
+  amount: number;
+  balanceBefore: number;
+  balanceAfter: number;
+  description: string | null;
+  orderId: string | null;
+  createdAt: string;
+}
+
+export interface PaginatedWalletTransactions {
+  transactions: WalletTransaction[];
+  total: number;
+  page: number;
+  pages: number;
+}
+
+export interface AgentOrder {
+  id: string;
+  reference: string;
+  status: import("./types").OrderStatus;
+  amount: number;
+  recipientPhone: string;
+  recipientNetwork: import("./types").Network;
+  createdAt: string;
+}
+
+export interface PaginatedAgentOrders {
+  orders: AgentOrder[];
+  total: number;
+  page: number;
+  pages: number;
 }
