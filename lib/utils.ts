@@ -39,10 +39,12 @@ export function orderStatusLabel(status: OrderStatus): string {
   const labels: Record<OrderStatus, string> = {
     PENDING: "Pending",
     PAYMENT_INITIATED: "Paying",
+    PAYMENT_SUCCESS: "Payment Confirmed",
     PAYMENT_FAILED: "Payment Failed",
     FULFILLMENT_INITIATED: "Sending",
     FULFILLMENT_FAILED: "Failed",
     FULFILLED: "Fulfilled",
+    REFUNDED: "Refunded",
   };
   return labels[status] || status;
 }
@@ -54,11 +56,13 @@ export function orderStatusColor(status: OrderStatus): string {
   const colors: Record<OrderStatus, string> = {
     PENDING: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
     PAYMENT_INITIATED: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+    PAYMENT_SUCCESS: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
     PAYMENT_FAILED: "bg-red-500/10 text-red-600 dark:text-red-400",
     FULFILLMENT_INITIATED:
       "bg-purple-500/10 text-purple-600 dark:text-purple-400",
     FULFILLMENT_FAILED: "bg-red-500/10 text-red-600 dark:text-red-400",
     FULFILLED: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    REFUNDED: "bg-muted text-muted-foreground",
   };
   return colors[status] || "bg-muted text-muted-foreground";
 }
@@ -120,11 +124,13 @@ export const TERMINAL_STATUSES = [
   "FULFILLED",
   "FULFILLMENT_FAILED",
   "PAYMENT_FAILED",
+  "REFUNDED",
 ];
 
 export const STATUS_STEPS = [
   { key: "PENDING", label: "Order placed" },
   { key: "PAYMENT_INITIATED", label: "Payment initiated" },
+  { key: "PAYMENT_SUCCESS", label: "Payment confirmed" },
   { key: "FULFILLMENT_INITIATED", label: "Sending data" },
   { key: "FULFILLED", label: "Data delivered" },
 ];
@@ -132,6 +138,7 @@ export const STATUS_STEPS = [
 export const STATUS_ORDER = [
   "PENDING",
   "PAYMENT_INITIATED",
+  "PAYMENT_SUCCESS",
   "FULFILLMENT_INITIATED",
   "FULFILLED",
 ];
