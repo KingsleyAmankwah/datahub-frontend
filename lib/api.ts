@@ -1,11 +1,15 @@
 import {
+  Agent,
+  AgentOrder,
   AuditLog,
   Bundle,
   CreateOrderPayload,
   GetAllOrdersParams,
   Order,
   OrderPublicStatus,
+  PaginatedAgentOrders,
   PaginatedOrders,
+  PaginatedWalletTransactions,
 } from "@/model/interface";
 import {
   CreateBundlePayload,
@@ -26,6 +30,8 @@ async function apiFetch<T>(
   path: string,
   init?: RequestInit,
   authenticated = false,
+  tokenOverride?: string,
+  unauthorizedRedirect?: string,
 ): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -33,7 +39,7 @@ async function apiFetch<T>(
   };
 
   if (authenticated) {
-    const token = getToken();
+    const token = tokenOverride ?? getToken();
     if (token) headers["Authorization"] = `Bearer ${token}`;
   }
 
@@ -42,17 +48,24 @@ async function apiFetch<T>(
     headers,
   });
 
-  if (response.status === 401 && typeof window !== "undefined") {
+  if (
+    response.status === 401 &&
+    unauthorizedRedirect &&
+    typeof window !== "undefined"
+  ) {
     const { clearAuth } = await import("@/lib/auth");
     clearAuth();
-    window.location.href = "/login";
+    window.location.href = unauthorizedRedirect;
     throw new Error("Unauthorized");
   }
 
-  if (!response.ok)
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
     throw new Error(
-      `${init?.method ?? "GET"} ${path} failed: ${response.statusText}`,
+      body?.message ??
+        `${init?.method ?? "GET"} ${path} failed: ${response.statusText}`,
     );
+  }
 
   // 204 No Content — return undefined
   if (response.status === 204) return undefined as T;
@@ -62,10 +75,17 @@ async function apiFetch<T>(
 
 // Shorthand helpers
 const authFetch = <T>(path: string, init?: RequestInit) =>
-  apiFetch<T>(path, init, true);
+  apiFetch<T>(path, init, true, undefined, "/login");
 
 const publicFetch = <T>(path: string, init?: RequestInit) =>
   apiFetch<T>(path, init, false);
+
+function agentFetch<T>(path: string, init?: RequestInit) {
+  if (typeof document === "undefined") return apiFetch<T>(path, init, false);
+  const match = document.cookie.match(/(?:^|;\s*)agent_token=([^;]*)/);
+  const token = match ? decodeURIComponent(match[1]) : undefined;
+  return apiFetch<T>(path, init, true, token, "/store/agent/login");
+}
 
 // ─── Orders API  ─────────────────────────────────────────────────
 
@@ -142,5 +162,87 @@ export const bundlesApi = {
 
   deactivate(id: string): Promise<void> {
     return authFetch<void>(`/bundles/${id}`, { method: "DELETE" });
+  },
+};
+
+// ─── Agents API ───────────────────────────────────────────────────────────────
+export const agentsApi = {
+  list(status?: string): Promise<Agent[]> {
+    const q = new URLSearchParams(status ? { status } : {});
+    const qs = q.toString();
+    return authFetch<Agent[]>(`/agents/admin/list${qs ? `?${qs}` : ""}`);
+  },
+
+  approve(id: string): Promise<void> {
+    return authFetch<void>(`/agents/admin/${id}/approve`, { method: "POST" });
+  },
+
+  suspend(id: string): Promise<void> {
+    return authFetch<void>(`/agents/admin/${id}/suspend`, { method: "POST" });
+  },
+};
+
+// ─── Agent Auth API ───────────────────────────────────────────────────────────
+
+export const agentAuthApi = {
+  register(payload: {
+    businessName: string;
+    name: string;
+    phoneNumber: string;
+    pin: string;
+  }) {
+    return publicFetch<{ id: string; businessName: string; status: string }>(
+      "/agents/apply",
+      { method: "POST", body: JSON.stringify(payload) },
+    );
+  },
+
+  login(payload: { phoneNumber: string; pin: string }) {
+    return publicFetch<{ accessToken: string }>("/auth/agent/login", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+};
+
+// ─── Agent Profile & Wallet API ───────────────────────────────────────────────
+
+export const agentProfileApi = {
+  getProfile() {
+    return agentFetch<Agent>("/agents/profile");
+  },
+
+  topUp(payload: { amount: number; payerPhone: string }) {
+    return agentFetch<{ providerRef: string }>("/agents/wallet/topup", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getTransactions(page = 1, limit = 20) {
+    return agentFetch<PaginatedWalletTransactions>(
+      `/agents/wallet/transactions?page=${page}&limit=${limit}`,
+    );
+  },
+};
+
+// ─── Agent Orders API ─────────────────────────────────────────────────────────
+
+export const agentOrdersApi = {
+  place(payload: {
+    bundleId: string;
+    recipientPhone: string;
+    recipientNetwork: string;
+  }) {
+    return agentFetch<AgentOrder>("/agents/orders", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getAll(page = 1, limit = 20) {
+    return agentFetch<PaginatedAgentOrders>(
+      `/agents/orders?page=${page}&limit=${limit}`,
+    );
   },
 };
