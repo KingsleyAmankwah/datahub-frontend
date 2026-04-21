@@ -47,9 +47,19 @@ export default function StoreLayout({
 
       {/* Footer */}
       <footer className="border-t border-border py-4">
-        <p className="text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Bundle Boss · Instant data bundles
-        </p>
+        <div className="max-w-lg mx-auto px-4 space-y-2">
+          {/* <p className="text-center text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Bundle Boss · Instant data bundles
+          </p> */}
+          <p className="text-center text-xs">
+            <Link
+              href="/store/agent/login"
+              className="text-emerald-500 hover:text-emerald-400 font-medium"
+            >
+              Agent login →
+            </Link>
+          </p>
+        </div>
       </footer>
     </div>
   );

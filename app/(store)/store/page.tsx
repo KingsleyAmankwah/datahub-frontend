@@ -105,16 +105,6 @@ export default function StorePage() {
           );
         })}
       </div>
-
-      {/* Order history link */}
-      <div className="text-center pb-2">
-        <Link
-          href="/store/orders"
-          className="text-sm text-emerald-500 hover:text-emerald-400 transition-colors"
-        >
-          View past orders →
-        </Link>
-      </div>
     </div>
   );
 }
