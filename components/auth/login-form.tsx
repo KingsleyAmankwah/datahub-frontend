@@ -35,7 +35,7 @@ export function LoginForm() {
       }
 
       const { accessToken, admin } = await res.json();
-      setAuth(accessToken, admin);
+      await setAuth(accessToken, admin);
       toast.success(`Welcome back, ${admin.name}`);
       router.push("/dashboard");
     } catch (err: unknown) {

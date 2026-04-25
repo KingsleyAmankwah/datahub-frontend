@@ -1,29 +1,13 @@
 import { AdminPayload } from "@/model/interface";
-import Cookies from "js-cookie";
 
-const TOKEN_KEY = "token";
-const ADMIN_KEY = "admin";
-
-export function setAuth(accessToken: string, admin: AdminPayload) {
-  Cookies.set(TOKEN_KEY, accessToken, { expires: 1, path: "/" });
-  Cookies.set(ADMIN_KEY, JSON.stringify(admin), { expires: 1, path: "/" });
+export async function setAuth(accessToken: string, admin: AdminPayload) {
+  await fetch("/api/auth/set-cookie", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ accessToken, admin }),
+  });
 }
 
-export function getToken(): string | undefined {
-  return Cookies.get(TOKEN_KEY);
-}
-
-export function getAdmin(): AdminPayload | null {
-  const raw = Cookies.get(ADMIN_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as AdminPayload;
-  } catch {
-    return null;
-  }
-}
-
-export function clearAuth() {
-  Cookies.remove(TOKEN_KEY, { path: "/" });
-  Cookies.remove(ADMIN_KEY, { path: "/" });
+export async function clearAuth() {
+  await fetch("/api/auth/clear-cookie", { method: "POST" });
 }

@@ -1,15 +1,11 @@
-import Cookies from "js-cookie";
-
-const TOKEN_KEY = "agent_token";
-
-export function setAgentToken(token: string) {
-  Cookies.set(TOKEN_KEY, token, { expires: 1, path: "/" });
+export async function setAgentToken(token: string) {
+  await fetch("/api/auth/set-agent-cookie", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ accessToken: token }),
+  });
 }
 
-export function getAgentToken(): string | undefined {
-  return Cookies.get(TOKEN_KEY);
-}
-
-export function clearAgentAuth() {
-  Cookies.remove(TOKEN_KEY, { path: "/" });
+export async function clearAgentAuth() {
+  await fetch("/api/auth/clear-cookie", { method: "POST" });
 }
